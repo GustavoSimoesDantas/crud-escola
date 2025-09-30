@@ -52,7 +52,21 @@ router.get('/', (req, res) => {
   // criar um novo aluno
   router.post('/', (req, res) => {
     const { nome, email, cpf, telefone, dataNascimento } = req.body;
-  
+
+    // checar campos obrigatórios
+  if (!nome || !email || !cpf || !telefone || !dataNascimento) {
+    return res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
+  }
+
+  // evitar duplicação de cpf ou email
+  if (alunos.some(a => a.cpf === cpf)) {
+    return res.status(400).json({ erro: 'Já existe um aluno com esse CPF.' });
+  }
+  if (alunos.some(a => a.email === email)) {
+    return res.status(400).json({ erro: 'Já existe um aluno com esse e-mail.' });
+  }
+
+
       const novoAluno = {
       id: alunos.length ? alunos[alunos.length - 1].id + 1 : 1,
       nome,
@@ -103,3 +117,8 @@ router.get('/', (req, res) => {
     const removido = alunos.splice(index, 1)[0];
     res.json({ mensagem: 'Aluno removido com sucesso.', aluno: removido });
   });
+
+
+
+
+    module.exports = router;
